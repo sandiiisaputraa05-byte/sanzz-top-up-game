@@ -1,0 +1,326 @@
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Top Up Game Online</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+      padding: 0;
+      background: url("https://images.unsplash.com/photo-1605902711622-cfb43c4437d1?ixlib=rb-4.0.3&auto=format&fit=crop&w=1500&q=80") no-repeat center center/cover;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .container {
+      width: 95%;
+      max-width: 550px;
+      background: rgba(255, 255, 255, 0.95);
+      padding: 25px;
+      border-radius: 20px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+    }
+    h2 {
+      text-align: center;
+      color: #222;
+      margin-bottom: 20px;
+    }
+    label {
+      font-weight: bold;
+      margin: 10px 0 5px;
+      display: block;
+    }
+    input, select {
+      width: 100%;
+      padding: 10px;
+      border-radius: 10px;
+      border: 1px solid #ccc;
+      margin-bottom: 15px;
+      font-size: 14px;
+    }
+    .game-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+    .game-card {
+      background: #f1f1f1;
+      border-radius: 15px;
+      padding: 15px;
+      text-align: center;
+      cursor: pointer;
+      transition: 0.3s;
+      border: 2px solid transparent;
+    }
+    .game-card img {
+      width: 60px;
+      height: 60px;
+      border-radius: 12px;
+      margin-bottom: 8px;
+    }
+    .game-card:hover {
+      background: #e3ffe3;
+      border: 2px solid #4CAF50;
+    }
+    .game-card.active {
+      background: #4CAF50;
+      color: #fff;
+      border: 2px solid #388E3C;
+    }
+    .nominal-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+      margin-bottom: 15px;
+    }
+    .nominal-card {
+      background: #f1f1f1;
+      border-radius: 12px;
+      padding: 15px;
+      text-align: center;
+      cursor: pointer;
+      font-weight: bold;
+      transition: 0.3s;
+      border: 2px solid transparent;
+    }
+    .nominal-card:hover {
+      background: #d1ffd1;
+      border: 2px solid #4CAF50;
+    }
+    .nominal-card.active {
+      background: #4CAF50;
+      color: #fff;
+      border: 2px solid #388E3C;
+    }
+    button {
+      width: 100%;
+      padding: 12px;
+      border-radius: 12px;
+      border: none;
+      background: #4CAF50;
+      color: white;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    button:hover {
+      background: #388E3C;
+    }
+    /* Popup sukses */
+    .popup {
+      display: none;
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: #4CAF50;
+      color: #fff;
+      padding: 15px 20px;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+      font-weight: bold;
+      animation: fadeInOut 3s forwards;
+    }
+    @keyframes fadeInOut {
+      0% { opacity: 0; transform: translateY(-20px); }
+      10% { opacity: 1; transform: translateY(0); }
+      90% { opacity: 1; }
+      100% { opacity: 0; transform: translateY(-20px); }
+    }
+    /* Modal konfirmasi */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.6);
+      justify-content: center;
+      align-items: center;
+      z-index: 999;
+    }
+    .modal-content {
+      background: #fff;
+      padding: 20px;
+      border-radius: 15px;
+      width: 90%;
+      max-width: 400px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+      text-align: center;
+      animation: slideDown 0.3s ease;
+    }
+    @keyframes slideDown {
+      from { transform: translateY(-50px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+    .modal-content h3 {
+      margin-bottom: 15px;
+      color: #333;
+    }
+    .modal-details {
+      text-align: left;
+      margin-bottom: 20px;
+    }
+    .modal-details p {
+      margin: 6px 0;
+    }
+    .modal-buttons {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+    }
+    .btn-cancel {
+      flex: 1;
+      padding: 10px;
+      border-radius: 8px;
+      border: none;
+      background: #ccc;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    .btn-confirm {
+      flex: 1;
+      padding: 10px;
+      border-radius: 8px;
+      border: none;
+      background: #4CAF50;
+      color: #fff;
+      cursor: pointer;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h2>⚡ Top Up Game Online ⚡</h2>
+    <form id="topupForm">
+
+      <label>Pilih Game</label>
+      <div class="game-grid" id="gameGrid">
+        <div class="game-card" data-game="Mobile Legends">
+          <img src="https://upload.wikimedia.org/wikipedia/en/7/7e/Mobile_Legends_Bang_Bang_logo.png">
+          Mobile Legends
+        </div>
+        <div class="game-card" data-game="Free Fire">
+          <img src="https://upload.wikimedia.org/wikipedia/en/0/0f/Garena_Free_Fire_logo.png">
+          Free Fire
+        </div>
+        <div class="game-card" data-game="PUBG Mobile">
+          <img src="https://upload.wikimedia.org/wikipedia/en/0/03/PUBG_Mobile_logo.png">
+          PUBG Mobile
+        </div>
+        <div class="game-card" data-game="Genshin Impact">
+          <img src="https://upload.wikimedia.org/wikipedia/en/6/6a/Genshin_Impact_logo.png">
+          Genshin Impact
+        </div>
+      </div>
+      <input type="hidden" id="game" required>
+
+      <label for="idplayer">ID Player</label>
+      <input type="text" id="idplayer" placeholder="Masukkan ID Player" required>
+
+      <label for="server">Server (opsional)</label>
+      <input type="text" id="server" placeholder="Contoh: 1234">
+
+      <label>Nominal Top Up</label>
+      <div class="nominal-grid" id="nominalGrid">
+        <div class="nominal-card" data-value="10 Diamonds - Rp 3.000">10 💎</div>
+        <div class="nominal-card" data-value="50 Diamonds - Rp 15.000">50 💎</div>
+        <div class="nominal-card" data-value="100 Diamonds - Rp 30.000">100 💎</div>
+        <div class="nominal-card" data-value="500 Diamonds - Rp 140.000">500 💎</div>
+      </div>
+      <input type="hidden" id="nominal" required>
+
+      <label for="payment">Metode Pembayaran</label>
+      <select id="payment" required>
+        <option value="">-- Pilih Pembayaran --</option>
+        <option value="DANA">DANA</option>
+        <option value="OVO">OVO</option>
+        <option value="GoPay">GoPay</option>
+        <option value="QRIS">QRIS</option>
+      </select>
+
+      <button type="submit">Top Up Sekarang</button>
+    </form>
+  </div>
+
+  <!-- Modal Konfirmasi -->
+  <div class="modal" id="modal">
+    <div class="modal-content">
+      <h3>Konfirmasi Pesanan</h3>
+      <div class="modal-details" id="orderSummary"></div>
+      <div class="modal-buttons">
+        <button class="btn-cancel" id="cancelBtn">❌ Batal</button>
+        <button class="btn-confirm" id="confirmBtn">✅ Konfirmasi</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Popup Sukses -->
+  <div class="popup" id="popup">
+    ✅ Top Up Berhasil Diproses!
+  </div>
+
+  <script>
+    const form = document.getElementById("topupForm");
+    const popup = document.getElementById("popup");
+    const modal = document.getElementById("modal");
+    const orderSummary = document.getElementById("orderSummary");
+    const cancelBtn = document.getElementById("cancelBtn");
+    const confirmBtn = document.getElementById("confirmBtn");
+    const gameCards = document.querySelectorAll(".game-card");
+    const gameInput = document.getElementById("game");
+    const nominalCards = document.querySelectorAll(".nominal-card");
+    const nominalInput = document.getElementById("nominal");
+
+    // pilih game
+    gameCards.forEach(card => {
+      card.addEventListener("click", () => {
+        gameCards.forEach(c => c.classList.remove("active"));
+        card.classList.add("active");
+        gameInput.value = card.getAttribute("data-game");
+      });
+    });
+
+    // pilih nominal
+    nominalCards.forEach(card => {
+      card.addEventListener("click", () => {
+        nominalCards.forEach(c => c.classList.remove("active"));
+        card.classList.add("active");
+        nominalInput.value = card.getAttribute("data-value");
+      });
+    });
+
+    // submit form -> tampilkan modal
+    form.addEventListener("submit", function(e) {
+      e.preventDefault();
+      if(gameInput.value && document.getElementById("idplayer").value && nominalInput.value && document.getElementById("payment").value) {
+        orderSummary.innerHTML = `
+          <p><strong>Game:</strong> ${gameInput.value}</p>
+          <p><strong>ID Player:</strong> ${document.getElementById("idplayer").value}</p>
+          <p><strong>Server:</strong> ${document.getElementById("server").value || '-'}</p>
+          <p><strong>Nominal:</strong> ${nominalInput.value}</p>
+          <p><strong>Pembayaran:</strong> ${document.getElementById("payment").value}</p>
+        `;
+        modal.style.display = "flex";
+      }
+    });
+
+    // batal
+    cancelBtn.addEventListener("click", () => {
+      modal.style.display = "none";
+    });
+
+    // konfirmasi
+    confirmBtn.addEventListener("click", () => {
+      modal.style.display = "none";
+      popup.style.display = "block";
+      setTimeout(() => { popup.style.display = "none"; }, 3000);
+    });
+  </script>
+
+</body>
+</html>
